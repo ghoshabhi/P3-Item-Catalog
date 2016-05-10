@@ -1,0 +1,124 @@
+{% extends "master.html" %}
+
+{% block content %}
+	<div style="padding-top:20px">
+		{% with messages = get_flashed_messages(category_filter=["message"]) %}
+    {% if messages %}
+      <div class="alert alert-success">
+        {% for message in messages %}
+        	<strong>{{message}}!</strong>
+        {% endfor %}
+      </div>
+  {% endif %}
+{% endwith %}
+
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-danger">
+      {% for message in errors %}
+      	<strong>{{message}}!</strong>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+    <div class="row">
+      <div class="col-md-5">
+        <p style="font-size:26px"> Created By  : {{creator.name}}</p>
+        <p style="font-size:26px"> Restaurant  : {{restaurant.name}}</p>
+      </div>
+      <div class="col-md-4">
+        <img src="{{creator.picture}}" height="150px" width="150px" class="img-responsive">
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+
+    <div class="row">
+      <ul class="nav nav-tabs" id="myTab">
+        <li class="active"><a data-target="#Appetizer" data-toggle="tab">Appetizers</a></li>
+        <li><a data-target="#Entree" data-toggle="tab">Entrees</a></li>
+        <li><a data-target="#Desert" data-toggle="tab">Deserts</a></li>
+        <li><a data-target="#Beverage" data-toggle="tab">Beverages</a></li>
+      </ul>
+
+    <div class="tab-content">
+      {% if items!= [] %}
+      
+      <div class="tab-pane active" id="Appetizer">
+        <div class="row">
+          {% for i in items %}
+          {% if i.course == 'Appetizer' %}
+          <div class="col-md-5" style="padding:20px">
+            <p>{{i.name}}</p>
+            <p>{{i.description}}</p>
+            <p>{{i.course}}</p>
+            <p style="font-weight:700">{{i.price}}</p>
+          </div>
+          <div class="col-md-3" style="padding:20px">
+            {% if i.image_url != null %}
+              <img class="img-rounded" height="100px" width="100px" src="{{i.image_url}}">
+            {% else %}
+              <img class="img-rounded" height="100px" width="100px" src="https://goo.gl/Cm9xKJ">
+            {% endif %}
+          </div>
+          {% endif %}
+          {% endfor %}          
+        </div>
+      </div>
+      
+      <div class="tab-pane" id="Entree">
+        <div class="row">
+          {% for i in items %}
+          {% if i.course == 'Entree' %}
+          <div style="padding:20px">
+            <p>{{i.name}}</p>
+            <p>{{i.description}}</p>
+            <p>{{i.course}}</p>
+            <p style="font-weight:700">{{i.price}}</p>
+          </div>
+          {% endif %}
+          {% endfor %}          
+        </div>
+      </div>
+      
+      <div class="tab-pane" id="Desert">
+        <div class="row">
+          {% for i in items %}
+          {% if i.course == 'Desert' %}
+          <div style="padding:20px">
+            <p>{{i.name}}</p>
+            <p>{{i.description}}</p>
+            <p>{{i.course}}</p>
+            <p style="font-weight:700">{{i.price}}</p>
+          </div>
+          {% endif %}
+          {% endfor %}          
+        </div>
+      </div>
+      
+      <div class="tab-pane" id="Beverage">
+        <div class="row">
+          {% for i in items %}
+          {% if i.course == 'Beverage' %}
+          <div style="padding:20px">
+            <p>{{i.name}}</p>
+            <p>{{i.description}}</p>
+            <p>{{i.course}}</p>
+            <p style="font-weight:700">{{i.price}}</p>
+          </div>
+          {% endif %}
+          {% endfor %}          
+        </div>
+      </div>
+
+      {% endif %}
+    </div>
+
+    <script>
+        jQuery(function() {
+          jQuery('#myTab a:last').tab('show')
+        });
+
+    </script>
+
+{% endblock %}

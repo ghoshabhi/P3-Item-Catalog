@@ -1,0 +1,49 @@
+{% extends "master.html" %}
+
+{% block content %}
+	<div style="padding-top:20px">
+		{% with messages = get_flashed_messages(category_filter=["message"]) %}
+    {% if messages %}
+      <div class="alert alert-success">
+        {% for message in messages %}
+        	<strong>{{message}}!</strong>
+        {% endfor %}
+      </div>
+  {% endif %}
+{% endwith %}
+
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-danger">
+      {% for message in errors %}
+      	<strong>{{message}}!</strong>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="row">
+	<div class="col-md-2"></div>
+		<div class="col-md-6">
+			<p style="font-size:30px;text-align:center">All Restaurants</p>
+			{% if 'username' not in session %}
+			{% else %}
+				<a href="{{url_for('newRestaurant')}}" class="btn btn-success" id="new-restaurant">
+					<span class="fa fa-cutlery"></span>  Add Restaurant
+				</a>
+			{% endif %}
+			<div class="row" style="margin:0 auto;padding-top:20px">
+				{% for r in restaurants %}
+				<a href="{{url_for('showMenu',restaurant_id = r.id)}}">
+					<div style="padding:5px; background-color: #F0F0F0;color: #7B7573; font-size:20px; line-height:24px" class="col-md-8">
+						{{r.name}}
+					</div>
+				</a>
+				<br>
+				<br>
+				{% endfor %}
+			</div>
+		</div>
+	<div class="col-md-4"></div>
+</div>
+{% endblock %}

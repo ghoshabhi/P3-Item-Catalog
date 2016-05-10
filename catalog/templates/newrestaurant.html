@@ -1,0 +1,47 @@
+{% extends "master.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(category_filter=["message"]) %}
+    {% if messages %}
+      <div class="alert alert-success">
+        {% for message in messages %}
+        	<strong>{{message}}!</strong>
+        {% endfor %}
+      </div>
+  {% endif %}
+{% endwith %}
+
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-danger">
+      {% for message in errors %}
+      	<strong>{{message}}!</strong>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div style="padding-top:20px">
+	<ol class="breadcrumb">
+	  <li><a href="{{url_for('showAllRestaurants')}}">Home</a></li>
+	  <li class="active">Create New Restaurant</li>
+	</ol>
+	<div class="row">
+		<div class="col-md-6 col-md-offset-1 padding-top">
+			<form method="post">
+				<div class="form-group">
+					<label for="name">Name:</label>
+						<input type ="text" class="form-control" name="restaurantName" placeholder="name your restaurant">
+						<br>
+						<button style="padding:10px;margin-right:4px" type="submit" class="btn btn-success" id="submit" type="submit">
+							<span class="fa fa-plus" aria-hidden="true"></span> Create Restaurant
+						</button>
+						
+						<a style="padding:10px" class="btn btn-danger" href = '{{url_for('showAllRestaurants')}}'>
+							<span class="fa fa-times" aria-hidden="true"></span> Cancel
+						</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

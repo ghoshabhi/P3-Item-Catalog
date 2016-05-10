@@ -1,0 +1,140 @@
+{% extends "master.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(category_filter=["message"]) %}
+    {% if messages %}
+      <div class="alert alert-success">
+        {% for message in messages %}
+            <strong>{{message}}!</strong>
+        {% endfor %}
+      </div>
+  {% endif %}
+{% endwith %}
+
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-danger">
+      {% for message in errors %}
+        <strong>{{message}}!</strong>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div style="padding:30px">
+
+	<div id="signinButton">
+		<span class="g-signin"
+			  data-scope="openid email"
+			  data-clientid="1015912740960-1fbo0ocor86ptj93c7eq4afd5p9ie0dn.apps.googleusercontent.com"
+			  data-redirecturi="postmessage"
+			  data-accesstype="offline"
+			  data-cookiepolicy="single_host_origin"
+			  data-callback="signInCallback"
+			  data-approvalprompt="force">
+		</span>
+	</div>
+	<div id="result"></div>
+
+	<script>
+	function signInCallback(authResult){
+		if(authResult['code']){
+			$('#signinButton').attr('style','display:none');
+
+			$.ajax({
+				type: 'POST',
+				url: '/gconnect?state={{STATE}}',
+				processData: false,
+				data: authResult['code'],
+				contentType: 'application/octet-stream; charset=utf-8',
+				success: function(result){
+					if (result){
+						$('#result').html('Login Successful!</br>' + result +
+							'</br>Redirecting....')
+						setTimeout(function(){
+							window.location.href = "/restaurants";
+						}, 4000);
+					}else if (authResult['error']){
+						console.log('There was error : ' + authResult['error'])
+					}else {
+						$('#result').html('Failed to make a server side call.Check your configuration and console for additional messages.');
+					}					
+				}
+			});
+		}
+	}
+
+	</script>
+
+<!--FACEBOOK SIGN IN -->
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId: '1083283158358935',
+            cookie: true,
+            xfbml: true,
+            version: 'v2.5'
+        });
+    };
+
+    // Load the SDK asynchronously
+    (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function sendTokenToServer() {
+        FB.getLoginStatus(function(response) {
+          console.log(response)
+            if (response.status === 'connected') {
+                // the user is logged in and has authenticated your
+                // app, and response.authResponse supplies
+                // the user's ID, a valid access token, a signed
+                // request, and the time the access token 
+                // and signed request each expire
+                var uid = response.authResponse.userID;
+                var access_token = response.authResponse.accessToken;
+                FB.api('/me', function(response) {
+                    console.log('Successful login for: ' + response.name);
+                    $.ajax({
+                        type: 'POST',
+                        url: '/fbconnect?state={{STATE}}',
+                        processData: false,
+                        data: access_token,
+                        contentType: 'application/octet-stream; charset=utf-8',
+                        success: function(result) {
+                            if (result) {
+                                $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...')
+                                setTimeout(function() {
+                                    window.location.href = "/restaurants";
+                                }, 4000);
+                            } else {
+                                $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                            }
+                        }
+                    });
+                });
+            } else if (response.status === 'not_authorized') {
+                // the user is logged in to Facebook, 
+                // but has not authenticated your app
+                console.log("Not Authorised!")
+            } else {
+                // the user isn't logged in to Facebook.
+                console.log("Please Login")
+            }
+        });
+    }
+    </script>
+
+
+<button>
+    <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+	<a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+	</fb:login-button>
+</button>
+
+</div>
+  	{% endblock %}

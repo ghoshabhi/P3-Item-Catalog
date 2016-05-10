@@ -1,0 +1,85 @@
+{% extends "master.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(category_filter=["message"]) %}
+    {% if messages %}
+      <div class="alert alert-success">
+        {% for message in messages %}
+        	<strong>{{message}}!</strong>
+        {% endfor %}
+      </div>
+  {% endif %}
+{% endwith %}
+
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-danger">
+      {% for message in errors %}
+      	<strong>{{message}}!</strong>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div style="padding-top:20px">
+	<ol class="breadcrumb">
+	  <li><a href="{{url_for('showAllRestaurants')}}">Home</a></li>
+	  <li class="active">Restaurant - {{restaurant.name}}</li>
+	</ol>
+
+<div class="row">
+		<div class="col-md-6 col-md-offset-1">
+			<form method = "post">
+				<div class="form-group">
+					<label for="name">Name:</label>
+					<input type ="text" maxlength="100" class="form-control" name="name" value="{{item.name }}">
+					<br>
+					<label for="description">Description:</label>
+					<textarea class="form-control" maxlength="250" rows="3" name="description">{{item.description}}</textarea>
+					<br>
+					<label for="price">Price:</label>
+					<div class="input-group">
+						<div class="input-group-addon">$</div>
+						<input type ="text" maxlength="10" class="form-control" name="price" value="{{item.price}}">
+					</div>
+					<br>
+					<label for="price">Photo URL:</label>
+					<div class="input-group">
+						<input type ="text" maxlength="250" class="form-control" name="image_url" value="{{item.image_url}}">
+					</div>
+					<br>
+					<label for="course">Course:</label>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="course" id="course1" value="Appetizer" {% if item.course == 'Appetizer'%}checked{%endif%}>Appetizer
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="course" id="course2" value="Entree" {% if item.course == 'Entree' %}checked{%endif%}>Entree
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="course" id="course3" value="Dessert" {% if item.course == 'Dessert'%}checked{%endif%}>Dessert
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="course" id="course4" value="Beverage" {%if item.course =='Beverage'%}checked{%endif%}>Beverage
+					  </label>
+					</div>
+					<br>
+					
+					<button type="submit" class="btn btn-success" id="submit">
+					<span class="fa fa-check" aria-hidden="true"></span>Save</button>
+					<a href = '{{url_for('showAllRestaurants')}}'>
+					
+					<button class="btn btn-danger">
+					<span class="fa fa-remove" aria-hidden="true"></span> Cancel</button>
+					</a>
+
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}

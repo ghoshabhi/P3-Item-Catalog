@@ -1,0 +1,80 @@
+{% extends "master.html" %}
+
+{% block content %}
+	<div style="padding-top:20px">
+		{% with messages = get_flashed_messages(category_filter=["message"]) %}
+    {% if messages %}
+      <div class="alert alert-success">
+        {% for message in messages %}
+        	<strong>{{message}}!</strong>
+        {% endfor %}
+      </div>
+  {% endif %}
+{% endwith %}
+
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-danger">
+      {% for message in errors %}
+      	<strong>{{message}}!</strong>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="container">
+	<h1>{{restaurant.name}}</h1>
+	<p style="padding:20px;font-weight:700;font-size:24px"> Add New Menu Item : </p>
+
+<div class="row">
+		<div class="col-md-6 col-md-offset-1 padding-top">
+			<form  action="{{url_for('newMenuItem',restaurant_id = restaurant.id)}}" method="POST">
+				<div class="form-group">
+					<label for="name">Name:</label>
+					<input type ="text" maxlength="50" class="form-control" name="name"placeholder="Name of the course">
+					<br>
+					<label for="description">Description:</label>
+					<textarea class="form-control" maxlength="250" rows="3" name="description" placeholder="Description of the course"></textarea>
+					<br>
+					<label for="price">Price:</label>
+					<div class="input-group">
+						<div class="input-group-addon">$</div>
+						<input type ="text" class="form-control" maxlength="10" name="price" placeholder="Price in $">
+					</div>
+					<br>
+					<label for="price">Photo URL:</label>
+					<div class="input-group">
+						<input type ="text" maxlength="250" class="form-control" name="image_url" placeholder="URL of the image">
+					</div>
+					<br>
+					<label for="course">Course:</label>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="course" id="course1" value="Appetizer">Appetizer
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="course" id="course2" value="Entree">Entree
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="course" id="course3" value="Dessert">Dessert
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="course" id="course4" value="Beverage">Beverage
+					  </label>
+					</div>
+					<br>
+					<button type="submit" style="padding:15px;border-color:green;font-size:16px;font-weight:500" class="btn btn-default" id="submit" type="submit">
+						<span style="padding-right:10px" class="fa fa-glass" aria-hidden="true"></span>Create
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
