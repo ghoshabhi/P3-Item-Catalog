@@ -21,6 +21,7 @@
 	$ python database_setup.python
 	$ python lotsofmenus.py
 	```
+	
 4) Once you have run the above commands successfully, you should see a *restaurantmenu.db* named file in your local directory /catalog
 
 
