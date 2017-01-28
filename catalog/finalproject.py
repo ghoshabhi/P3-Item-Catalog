@@ -9,7 +9,7 @@ import random
 import string
 import os
 
-from dicttoxml import dicttoxml
+# from dicttoxml import dicttoxml
 import json
 
 from oauth2client.client import flow_from_clientsecrets
@@ -65,7 +65,7 @@ def gconnect():
         response = make_response(json.dumps('Invalid state parameter!'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    
+
     # Obtain authorization code
     code = request.data
 
@@ -89,7 +89,7 @@ def gconnect():
            % access_token)
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
-    # print result 
+    # print result
 
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
@@ -142,7 +142,7 @@ def gconnect():
     if not user_id:
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
-        
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -172,7 +172,7 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
-    ''' Retrieves an object of the user by giving 
+    ''' Retrieves an object of the user by giving
         user's id(user_id) as input '''
     user = session.query(User).filter_by(id=user_id).one()
     return user
@@ -193,12 +193,12 @@ def gdisconnect():
     access_token = login_session.get('access_token')
 
     print 'In gdisconnect access token is %s', access_token
-    print 'User name is: ' 
+    print 'User name is: '
     print login_session['username']
-    
+
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'), 
+        response = make_response(json.dumps('Current user not connected.'),
                         401)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -206,10 +206,10 @@ def gdisconnect():
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    
+
     if result['status'] == '200':
         del login_session['credentials']
-        del login_session['access_token'] 
+        del login_session['access_token']
         del login_session['gplus_id']
         del login_session['username']
         del login_session['email']
@@ -218,7 +218,7 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         flash("Successfully disconnected!")
         return redirect(url_for('showAllRestaurants'))
-    else:    
+    else:
         response = make_response(json.dumps('Failed to revoke token for \
             given user.', 400))
         response.headers['Content-Type'] = 'application/json'
@@ -229,8 +229,8 @@ def gdisconnect():
 # Function to connect to the app using Facebook Account of the User.
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
-    ''' Function to connect the app user using Facebook's OAuth login. 
-        In this method the short-lived access token from Facebook is 
+    ''' Function to connect the app user using Facebook's OAuth login.
+        In this method the short-lived access token from Facebook is
         exchanged with Python's long lived token. '''
 
     if request.args.get('state') != login_session['state']:
@@ -244,7 +244,7 @@ def fbconnect():
 
     app_id = json.loads(open('fb_client_secrets.json', 'r').
             read())['web']['app_id']
-    
+
     app_secret = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_secret']
 
@@ -252,21 +252,21 @@ def fbconnect():
 
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
-    
+
     userinfo_url = "https://graph.facebook.com/v2.4/me"
     token = result.split("&")[0]
-    
+
     url = 'https://graph.facebook.com/v2.4/me?%s&fields=name,id,email' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
-    
+
     login_session['provider'] = 'facebook'
     login_session['username'] = data["name"]
     login_session['email'] = data["email"]
     login_session['facebook_id'] = data["id"]
 
-    # The token must be stored in the login_session in order to 
+    # The token must be stored in the login_session in order to
     # properly logout, let's strip out the information before the
     # equals sign in our token
     stored_token = token.split("=")[1]
@@ -297,14 +297,14 @@ def fbconnect():
                     -moz-border-radius: 150px;">'''
 
     flash("Now logged in as %s" % login_session['username'])
-    return output    
+    return output
 
 
 # Function to disconnect out of the app using Facebook
 @app.route('/fbdisconnect')
 def fbdisconnect():
-    ''' This method is used to disconnect the user from the app 
-        using Facebook credentials. 
+    ''' This method is used to disconnect the user from the app
+        using Facebook credentials.
     '''
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
@@ -312,7 +312,7 @@ def fbdisconnect():
     url = 'https://graph.facebook.com/%s/permissions?access_token=%s'% (facebook_id, access_token)
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
-    del login_session['access_token'] 
+    del login_session['access_token']
     del login_session['username']
     del login_session['email']
     del login_session['picture']
@@ -324,7 +324,7 @@ def fbdisconnect():
 @app.route('/disconnect')
 def disconnect():
     ''' In each login method a login_session['provider'] is added.
-        The user is logged out from the system based on the value of 
+        The user is logged out from the system based on the value of
         login_session. Necessary logout method is called based on its value.
      '''
 
@@ -340,16 +340,16 @@ def disconnect():
         return redirect(url_for('showAllRestaurants'))
 
 
-@app.route('/restaurants/XML')
-def restaurantXML():
-    ''' This is an API endpoint. The output is in the form of a
-        XML document.
-    '''
-    restaurants = session.query(Restaurant).all()
-    jsonObj = jsonify(Restaurant = [restaurant.serialize \
-        for restaurant in restaurants ])
-    restaurantXML = dicttoxml.dicttoxml(jsonObj)
-    return restaurantXML
+# @app.route('/restaurants/XML')
+# def restaurantXML():
+#     ''' This is an API endpoint. The output is in the form of a
+#         XML document.
+#     '''
+#     restaurants = session.query(Restaurant).all()
+#     jsonObj = jsonify(Restaurant = [restaurant.serialize \
+#         for restaurant in restaurants ])
+#     restaurantXML = dicttoxml.dicttoxml(jsonObj)
+#     return restaurantXML
 
 
 @app.route('/restaurants/JSON')
@@ -365,7 +365,7 @@ def restaurantJSON():
 @app.route('/restaurant/<int:restaurant_id>/menu/JSON')
 def restaurantMenuJSON(restaurant_id):
     ''' This is an API endpoint. The output is a list of all the menu-items
-        in JSON format. 
+        in JSON format.
     '''
     restaurant = session.query(Restaurant).filter_by(
         id=restaurant_id).one()
@@ -390,7 +390,7 @@ def showAllRestaurants():
     ''' This method retrieves all restaurants and renders it to restaurants.html template.
     '''
     restaurants = session.query(Restaurant).all()
-    return render_template('restaurants.html', restaurants=restaurants)    
+    return render_template('restaurants.html', restaurants=restaurants)
 
 
 # Create New Restaurant
@@ -398,7 +398,7 @@ def showAllRestaurants():
 @app.route('/restaurant/new', methods=['GET','POST'])
 def newRestaurant():
     ''' This method creates a new Restaurant. It also checks if the user is logged in or not
-        by using the @login_required decorator. It then allows creating 
+        by using the @login_required decorator. It then allows creating
         new Restaurant which takes "Name" of the restaurant and the user's id as parameters.
     '''
     if request.method == 'POST':
@@ -422,7 +422,7 @@ def newRestaurant():
 def editRestaurant(restaurant_id):
     ''' This function edit's the name of the restaurant. This function also
         checks if the editor of the restaurant is also creator of the same,
-        if not he/she is not allowed to edit the name. 
+        if not he/she is not allowed to edit the name.
 
         restaurant_id :  ID of the restaurant
     '''
@@ -449,9 +449,9 @@ def editRestaurant(restaurant_id):
 @login_required
 @app.route('/restaurant/<int:restaurant_id>/delete', methods=['GET','POST'])
 def deleteRestaurant(restaurant_id):
-    ''' Removes the restaurant from the database. First the user is checked if he/she is 
-        logged in or not. Then the logged in user is checked if he/she was the creator of 
-        the particular restaurant. Only then he/she is allowed to delete the restaurant! 
+    ''' Removes the restaurant from the database. First the user is checked if he/she is
+        logged in or not. Then the logged in user is checked if he/she was the creator of
+        the particular restaurant. Only then he/she is allowed to delete the restaurant!
 
         restaurant_id : ID of the restaurant
     '''
@@ -476,8 +476,8 @@ def deleteRestaurant(restaurant_id):
 @app.route('/restaurant/<int:restaurant_id>/menu', methods=['GET','POST'])
 def showMenu(restaurant_id):
     ''' This function displays all the menu items of a particular restaurant.
-        It takes restaurant's id as input. First checks if the user is 
-        logged in or not and then shows the menu differently based on that. 
+        It takes restaurant's id as input. First checks if the user is
+        logged in or not and then shows the menu differently based on that.
 
         If the logged in user is also the creator of the restaurant, then he/she is
         shown the edit/delete menu items options. Otherwise only menu items
@@ -491,7 +491,7 @@ def showMenu(restaurant_id):
     items = session.query(MenuItem).filter_by(
         restaurant_id=restaurant_id).all()
     if creator.id != login_session['user_id']:
-        return render_template('publicmenu.html', items=items, 
+        return render_template('publicmenu.html', items=items,
             restaurant=restaurant, creator = creator)
     else:
         return render_template('menu.html', items=items,
@@ -507,8 +507,8 @@ def allowed_file(filename):
 @login_required
 @app.route('/restaurant/<int:restaurant_id>/menu/new/', methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
-    ''' Creats a new menu item for a given restaurant by taking the 
-        restaurant's id as input parameter. But first the user is 
+    ''' Creats a new menu item for a given restaurant by taking the
+        restaurant's id as input parameter. But first the user is
         checked if he/she is logged in or not.
 
         resaurant_id : id of the restaurant
@@ -517,27 +517,27 @@ def newMenuItem(restaurant_id):
     if request.method == 'POST':
         newItem = MenuItem(name=request.form['name'],
                            description=request.form['description'],
-                           price=request.form['price'], 
-                           course=request.form['course'], 
+                           price=request.form['price'],
+                           course=request.form['course'],
                            restaurant_id=restaurant_id,
                            image_url=request.form['image_url'])
         session.add(newItem)
         session.commit()
         flash('New Menu : "%s" Item Successfully Created' % (newItem.name))
-        return redirect(url_for('showMenu', restaurant_id=restaurant_id))       
+        return redirect(url_for('showMenu', restaurant_id=restaurant_id))
     else:
         return render_template('newmenuitem.html', restaurant = restaurant)
 
 
 # Edit Menu Item
 @login_required
-@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/edit', 
+@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/edit',
     methods=['GET','POST'])
 def editMenuItem(restaurant_id,menu_id):
-    ''' Edits the menu item's details. The user is checked if he/she is 
-        authorised to perform the editing operation by checking if 
-        he/she is the creator of the restaurant and if he/she is logged in 
-        or not. 
+    ''' Edits the menu item's details. The user is checked if he/she is
+        authorised to perform the editing operation by checking if
+        he/she is the creator of the restaurant and if he/she is logged in
+        or not.
 
         resaurant_id : id of the restaurant
         menu_id : id of the menu item of selected restaurant
@@ -566,16 +566,16 @@ def editMenuItem(restaurant_id,menu_id):
         flash('Menu Item Successfully Edited','message')
         return redirect(url_for('showMenu', restaurant_id=restaurant_id))
     else:
-        return render_template('editmenuitem.html', restaurant=restaurant, 
+        return render_template('editmenuitem.html', restaurant=restaurant,
                 menu_id=menu_id, item=editedItem)
 
 
 # Delete Menu Item
 @login_required
-@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/delete', 
+@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/delete',
     methods=['GET','POST'])
 def deleteMenuItem(restaurant_id,menu_id):
-    ''' Deletes a menu item.The user is checked if he is authorised to 
+    ''' Deletes a menu item.The user is checked if he is authorised to
         perform the deleting operation by checking if he/she is the creator
         of the restaurant and if he/she is logged in or not.
     '''
@@ -600,4 +600,4 @@ def deleteMenuItem(restaurant_id,menu_id):
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=3000)

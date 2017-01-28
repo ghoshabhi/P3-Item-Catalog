@@ -39,14 +39,16 @@
 	function signInCallback(authResult){
 		if(authResult['code']){
 			$('#signinButton').attr('style','display:none');
-
+      const url = '/gconnect?state={{STATE}}';
+      alert(url);
 			$.ajax({
 				type: 'POST',
-				url: '/gconnect?state={{STATE}}',
+				url: url,
 				processData: false,
 				data: authResult['code'],
 				contentType: 'application/octet-stream; charset=utf-8',
 				success: function(result){
+          alert('success');
 					if (result){
 						$('#result').html('Login Successful!</br>' + result +
 							'</br>Redirecting....')
@@ -54,10 +56,12 @@
 							window.location.href = "/restaurants";
 						}, 4000);
 					}else if (authResult['error']){
+            alert("error");
 						console.log('There was error : ' + authResult['error'])
 					}else {
+            alert("failed req");
 						$('#result').html('Failed to make a server side call.Check your configuration and console for additional messages.');
-					}					
+					}
 				}
 			});
 		}
@@ -93,7 +97,7 @@
                 // the user is logged in and has authenticated your
                 // app, and response.authResponse supplies
                 // the user's ID, a valid access token, a signed
-                // request, and the time the access token 
+                // request, and the time the access token
                 // and signed request each expire
                 var uid = response.authResponse.userID;
                 var access_token = response.authResponse.accessToken;
@@ -118,7 +122,7 @@
                     });
                 });
             } else if (response.status === 'not_authorized') {
-                // the user is logged in to Facebook, 
+                // the user is logged in to Facebook,
                 // but has not authenticated your app
                 console.log("Not Authorised!")
             } else {
