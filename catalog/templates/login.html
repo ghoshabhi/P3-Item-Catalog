@@ -37,35 +37,34 @@
 
 	<script>
 	function signInCallback(authResult){
-		if(authResult['code']){
-			$('#signinButton').attr('style','display:none');
-      const url = '/gconnect?state={{STATE}}';
-      alert(url);
-			$.ajax({
-				type: 'POST',
-				url: url,
-				processData: false,
-				data: authResult['code'],
-				contentType: 'application/octet-stream; charset=utf-8',
-				success: function(result){
-				    if (result){
-			   	        $('#result').html('Login Successful!</br>' + result +
-						'</br>Redirecting....')
-					setTimeout(function(){
-					     window.location.href = "/restaurants";
-				        }, 4000);
-			  	   } else if (authResult['error']){
-					alert("error");
-					console.log('There was error : ' + authResult['error'])
-				   } else {
-					alert("failed req");
-					$('#result').html('Failed to make a server side call.Check your configuration and console for additional messages.');
-				   }
-				}
-		 	   });
+	    if(authResult['code']){
+	        $('#signinButton').attr('style','display:none');
+      		const url = '/gconnect?state={{STATE}}';
+		alert(url);
+		$.ajax({
+			type: 'POST',
+			url: url,
+			processData: false,
+			data: authResult['code'],
+			contentType: 'application/octet-stream; charset=utf-8',
+			success: function(result){
+			    if (result){
+				$('#result').html('Login Successful!</br>' + result +
+					'</br>Redirecting....')
+				setTimeout(function(){
+				     window.location.href = "/restaurants";
+				}, 4000);
+			   } else if (authResult['error']){
+				alert("error");
+				console.log('There was error : ' + authResult['error'])
+			   } else {
+				alert("failed req");
+				$('#result').html('Failed to make a server side call.Check your configuration and console for additional messages.');
+			   }
+			}
+		   });
 		}
-	}
-
+	    }
 	</script>
 
 <!--FACEBOOK SIGN IN -->
@@ -136,8 +135,9 @@
 <button>
     <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
 	<a href='javascript:sendTokenToServer()'>Login with Facebook</a>
-	</fb:login-button>
+    </fb:login-button>
 </button>
 
 </div>
-  	{% endblock %}
+
+{% endblock %}
