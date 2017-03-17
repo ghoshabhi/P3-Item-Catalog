@@ -3,7 +3,7 @@
 
 ---------
 
-##Steps to run this project :
+## Steps to run this project :
 
 1) Go to your vagrant environment and ssh into the virtual machine by using the following commands :
 
