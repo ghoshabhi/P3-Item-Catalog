@@ -394,8 +394,8 @@ def showAllRestaurants():
 
 
 # Create New Restaurant
-@login_required
 @app.route('/restaurant/new', methods=['GET','POST'])
+@login_required
 def newRestaurant():
     ''' This method creates a new Restaurant. It also checks if the user is logged in or not
         by using the @login_required decorator. It then allows creating
@@ -417,8 +417,8 @@ def newRestaurant():
 
 
 # Edit Restaurant
-@login_required
 @app.route('/restaurant/<int:restaurant_id>/edit', methods=['GET','POST'])
+@login_required
 def editRestaurant(restaurant_id):
     ''' This function edit's the name of the restaurant. This function also
         checks if the editor of the restaurant is also creator of the same,
@@ -446,8 +446,8 @@ def editRestaurant(restaurant_id):
 
 
 # Delete restaurant
-@login_required
 @app.route('/restaurant/<int:restaurant_id>/delete', methods=['GET','POST'])
+@login_required
 def deleteRestaurant(restaurant_id):
     ''' Removes the restaurant from the database. First the user is checked if he/she is
         logged in or not. Then the logged in user is checked if he/she was the creator of
